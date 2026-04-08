@@ -53,24 +53,36 @@
                             </a>
                             <h3>Sign In</h3>
                         </div>
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                            <label for="floatingInput">Email address</label>
-                        </div>
-                        <div class="form-floating mb-4">
-                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-                            <label for="floatingPassword">Password</label>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                        <form method="POST" action="{{ route('login.post') }}">
+                            @csrf
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                    id="floatingInput" name="email"
+                                    value="{{ old('email') }}"
+                                    placeholder="name@example.com" required autofocus>
+                                <label for="floatingInput">Email address</label>
                             </div>
-                            <a href="">Forgot Password</a>
-                        </div>
-                        <a href="{{ route('dashboard') }}" class="btn btn-primary py-3 w-100 mb-4">Sign In</a>
-                        <!-- <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Sign In</button> -->
-                        <p class="text-center mb-0">Don't have an Account? <a href="">Sign Up</a></p>
+                            <div class="form-floating mb-4">
+                                <input type="password" class="form-control"
+                                    id="floatingPassword" name="password"
+                                    placeholder="Password" required>
+                                <label for="floatingPassword">Password</label>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                    <label class="form-check-label" for="remember">Ingat Saya</label>
+                                </div>
+                            </div>
+
+                            @if ($errors->any())
+                            <div class="alert alert-danger py-2 mb-3">
+                                {{ $errors->first() }}
+                            </div>
+                            @endif
+
+                            <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Sign In</button>
+                        </form>
                     </div>
                 </div>
             </div>
