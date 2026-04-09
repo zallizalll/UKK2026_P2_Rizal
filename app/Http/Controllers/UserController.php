@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -18,21 +17,37 @@ class UserController extends Controller
     {
         $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:8',
+            'email'    => 'required|email|unique:users',
+            'password' => 'required|min:6',
             'role'     => 'required|in:admin,petugas,owner',
-            'status'   => 'required|in:aktif,nonaktif',
+            'shift'    => 'nullable|in:1,2,3|required_if:role,petugas',
+            'status'   => 'nullable|in:aktif,nonaktif', // 🔥 FIX DISINI
         ]);
+
+        // logic shift
+        $shift = $request->role === 'petugas' ? $request->shift : null;
+
+        // override hanya untuk petugas
+        $isOverride = $request->role === 'petugas'
+            ? $request->boolean('status_override')
+            : false;
+
+        // 🔥 kalau tidak override → status default aja
+        $status = $isOverride
+            ? $request->status
+            : 'nonaktif';
 
         User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
-            'status'   => $request->status,
+            'name'            => $request->name,
+            'email'           => $request->email,
+            'password'        => bcrypt($request->password),
+            'role'            => $request->role,
+            'shift'           => $shift,
+            'status'          => $status,
+            'status_override' => $isOverride,
         ]);
 
-        return redirect()->route('admin.users')->with('success', 'User berhasil ditambahkan!');
+        return back()->with('success', 'User berhasil ditambahkan.');
     }
 
     public function update(Request $request, $id)
@@ -43,24 +58,52 @@ class UserController extends Controller
             'name'   => 'required|string|max:255',
             'email'  => 'required|email|unique:users,email,' . $id . ',id_user',
             'role'   => 'required|in:admin,petugas,owner',
-            'status' => 'required|in:aktif,nonaktif',
+            'shift'  => 'nullable|in:1,2,3|required_if:role,petugas',
+            'status' => 'nullable|in:aktif,nonaktif', // 🔥 FIX
         ]);
 
+        $shift = $request->role === 'petugas' ? $request->shift : null;
+
+        $isOverride = $request->role === 'petugas'
+            ? $request->boolean('status_override')
+            : false;
+
+        // 🔥 kalau tidak override → pakai status lama aja
+        $status = $isOverride
+            ? $request->status
+            : $user->status;
+
         $data = [
-            'name'   => $request->name,
-            'email'  => $request->email,
-            'role'   => $request->role,
-            'status' => $request->status,
+            'name'            => $request->name,
+            'email'           => $request->email,
+            'role'            => $request->role,
+            'shift'           => $shift,
+            'status'          => $status,
+            'status_override' => $isOverride,
         ];
 
         if ($request->filled('password')) {
-            $request->validate(['password' => 'min:8']);
-            $data['password'] = Hash::make($request->password);
+            $data['password'] = bcrypt($request->password);
         }
 
         $user->update($data);
 
-        return redirect()->route('admin.users')->with('success', 'User berhasil diupdate!');
+        return back()->with('success', 'User berhasil diperbarui.');
+    }
+
+    public function print($role)
+    {
+        $validRoles = ['admin', 'petugas', 'owner'];
+
+        if (!in_array($role, $validRoles)) {
+            abort(404);
+        }
+
+        $users = User::where('role', $role)
+            ->orderBy('name')
+            ->get();
+
+        return view('pages.users.print', compact('users', 'role'));
     }
 
     public function destroy($id)
@@ -68,10 +111,11 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         if ($user->id_user === auth()->user()->id_user) {
-            return redirect()->route('admin.users')->with('error', 'Tidak bisa menghapus akun sendiri!');
+            return back()->with('error', 'Tidak bisa menghapus akun sendiri!');
         }
 
         $user->delete();
-        return redirect()->route('admin.users')->with('success', 'User berhasil dihapus!');
+
+        return back()->with('success', 'User berhasil dihapus!');
     }
 }

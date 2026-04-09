@@ -48,8 +48,8 @@
                 <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
                     <div class="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <a href="index.html" class="">
-                                <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>DarkPan</h3>
+                            <a href="#" class="navbar-brand mx-4 mb-3">
+                                <h3 class="text-primary"><i class="fa fa-parking me-2"></i>SistemParkir</h3>
                             </a>
                             <h3>Sign In</h3>
                         </div>
@@ -82,6 +82,7 @@
                             @endif
 
                             <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Sign In</button>
+                            <p class="text-center mb-0">Belum punya akun? <a href="{{ route('register') }}">Sign Up</a></p>
                         </form>
                     </div>
                 </div>

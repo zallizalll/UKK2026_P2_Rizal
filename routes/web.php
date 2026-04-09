@@ -14,6 +14,8 @@ Route::get('/', [AuthController::class, 'showLogin']);
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
 // ===== ADMIN =====
 Route::middleware(['auth', 'role:admin'])
@@ -25,6 +27,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/users',        [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{id}',    [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/users/print/{role}', [UserController::class, 'print'])->name('users.print');
 
         Route::get('/tarif',         [TarifController::class, 'index'])->name('tarif');
         Route::post('/tarif',        [TarifController::class, 'store'])->name('tarif.store');

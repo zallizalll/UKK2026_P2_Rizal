@@ -10,13 +10,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // Primary key sesuai tabel lo
     protected $primaryKey = 'id_user';
-
-    // Role constants
-    const ROLE_ADMIN   = 'admin';
-    const ROLE_PETUGAS = 'petugas';
-    const ROLE_OWNER   = 'owner';
 
     protected $fillable = [
         'name',
@@ -24,11 +18,17 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'shift',
+        'status_override'
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'status_override' => 'boolean',
     ];
 
     protected function casts(): array
@@ -39,21 +39,37 @@ class User extends Authenticatable
         ];
     }
 
-    // Helper methods
-    public function isAdmin(): bool
+    // ==============================
+    // 🔥 SHIFT ACTIVE (REALTIME)
+    // ==============================
+    public function isShiftActive(): bool
     {
-        return $this->role === self::ROLE_ADMIN;
+        $hour = now()->hour;
+
+        return match ($this->shift) {
+            '1' => $hour >= 5  && $hour < 12,
+            '2' => $hour >= 12 && $hour < 19,
+            '3' => $hour >= 19 || $hour < 2,
+            default => false,
+        };
     }
-    public function isPetugas(): bool
+
+    // ==============================
+    // 🔥 STATUS FINAL (REALTIME)
+    // ==============================
+    public function getEffectiveStatusAttribute(): string
     {
-        return $this->role === self::ROLE_PETUGAS;
-    }
-    public function isOwner(): bool
-    {
-        return $this->role === self::ROLE_OWNER;
-    }
-    public function isAktif(): bool
-    {
-        return $this->status === 'aktif';
+        // kalau di override manual
+        if ($this->status_override) {
+            return $this->status;
+        }
+
+        // kalau petugas + ada shift → ikut jam
+        if ($this->role === 'petugas' && $this->shift) {
+            return $this->isShiftActive() ? 'aktif' : 'nonaktif';
+        }
+
+        // selain itu pakai status biasa
+        return $this->status;
     }
 }
