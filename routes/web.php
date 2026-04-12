@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TarifController;
+use App\Http\Controllers\AreaParkirController;
 use App\Http\Controllers\KendaraanController;
+use App\Http\Controllers\LogAktivitasController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboard;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
@@ -30,16 +32,25 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/users/print/{role}', [UserController::class, 'print'])->name('users.print');
 
         Route::get('/tarif',         [TarifController::class, 'index'])->name('tarif');
+        Route::get('/tarif/print',   [TarifController::class, 'print'])->name('tarif.print');
         Route::post('/tarif',        [TarifController::class, 'store'])->name('tarif.store');
         Route::put('/tarif/{id}',    [TarifController::class, 'update'])->name('tarif.update');
         Route::delete('/tarif/{id}', [TarifController::class, 'destroy'])->name('tarif.destroy');
 
-        Route::get('kendaraan', [KendaraanController::class, 'index'])->name('kendaraan');
-        Route::post('kendaraan', [KendaraanController::class, 'store'])->name('kendaraan.store');
-        Route::put('kendaraan/{id}', [KendaraanController::class, 'update'])->name('kendaraan.update');
-        Route::delete('kendaraan/{id}', [KendaraanController::class, 'destroy'])->name('kendaraan.destroy');
+        Route::get('kendaraan',          [KendaraanController::class, 'index'])->name('kendaraan');
+        Route::get('kendaraan/print',    [KendaraanController::class, 'print'])->name('kendaraan.print');
+        Route::post('kendaraan',         [KendaraanController::class, 'store'])->name('kendaraan.store');
+        Route::put('kendaraan/{id}',     [KendaraanController::class, 'update'])->name('kendaraan.update');
+        Route::delete('kendaraan/{id}',  [KendaraanController::class, 'destroy'])->name('kendaraan.destroy');
 
-        Route::get('/area',      fn() => abort(404))->name('area');
+        Route::get('/area',           [AreaParkirController::class, 'index'])->name('area');
+        Route::get('/area/print',     [AreaParkirController::class, 'print'])->name('area.print');
+        Route::post('/area',          [AreaParkirController::class, 'store'])->name('area.store');
+        Route::put('/area/{id}',      [AreaParkirController::class, 'update'])->name('area.update');
+        Route::delete('/area/{id}',   [AreaParkirController::class, 'destroy'])->name('area.destroy');
+
+        Route::get('/log',       [LogAktivitasController::class, 'index'])->name('log');
+
         Route::get('/laporan',   fn() => abort(404))->name('laporan');
         Route::get('/transaksi', fn() => abort(404))->name('transaksi');
     });

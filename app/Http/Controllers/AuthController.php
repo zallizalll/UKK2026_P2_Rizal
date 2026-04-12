@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\LogAktivitas;
+use App\Traits\LogAktivitasTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // ===================== LOGIN =====================
+    use LogAktivitasTrait;
 
     public function showLogin()
     {
-        if (Auth::check()) {
-            return $this->redirectByRole();
-        }
+        if (Auth::check()) return $this->redirectByRole();
         return view('auth.login');
     }
 
@@ -29,13 +29,15 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            // Cek status aktif
             if (Auth::user()->status !== 'aktif') {
                 Auth::logout();
                 return back()->withErrors([
                     'email' => 'Akun Anda telah dinonaktifkan. Hubungi admin.'
                 ])->onlyInput('email');
             }
+
+            // LOG LOGIN
+            $this->log('Login sebagai ' . ucfirst(Auth::user()->role) . ' — ' . Auth::user()->name);
 
             return $this->redirectByRole();
         }
@@ -47,32 +49,30 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        // LOG LOGOUT (sebelum Auth::logout)
+        if (Auth::check()) {
+            $this->log('Logout — ' . Auth::user()->name);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
 
-    // ===================== REGISTER (Admin Only) =====================
-
     public function showRegister()
     {
-        if (Auth::check()) {
-            return $this->redirectByRole();
-        }
-
+        if (Auth::check()) return $this->redirectByRole();
         $adminExists = User::where('role', 'admin')->exists();
         if ($adminExists) {
             return redirect()->route('login')
                 ->withErrors(['email' => 'Registrasi tidak tersedia. Hubungi admin untuk menambahkan akun.']);
         }
-
         return view('auth.register');
     }
 
     public function register(Request $request)
     {
-        // Cek lagi di sisi server (double check)
         $adminExists = User::where('role', 'admin')->exists();
         if ($adminExists) {
             return redirect()->route('login')
@@ -80,9 +80,9 @@ class AuthController extends Controller
         }
 
         $request->validate([
-            'name'                  => ['required', 'string', 'max:255'],
-            'email'                 => ['required', 'email', 'unique:users,email'],
-            'password'              => ['required', 'min:6', 'confirmed'],
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'min:6', 'confirmed'],
         ]);
 
         $user = User::create([
@@ -96,11 +96,12 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
+        // LOG REGISTER
+        $this->log('Registrasi akun admin baru — ' . $user->name);
+
         return redirect()->route('admin.dashboard')
             ->with('success', 'Akun admin berhasil dibuat!');
     }
-
-    // ===================== PRIVATE =====================
 
     private function redirectByRole()
     {

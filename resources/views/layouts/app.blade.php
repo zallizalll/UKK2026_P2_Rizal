@@ -76,8 +76,8 @@
                     <a href="{{ route('admin.tarif') }}" class="nav-item nav-link {{ request()->routeIs('admin.tarif*') ? 'active' : '' }}">
                         <i class="fa fa-tags me-2"></i>Tarif
                     </a>
-                    <a href="{{ route('admin.laporan') }}" class="nav-item nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
-                        <i class="fa fa-chart-bar me-2"></i>Laporan
+                    <a href="{{ route('admin.log') }}" class="nav-item nav-link {{ request()->routeIs('admin.log*') ? 'active' : '' }}">
+                        <i class="fa fa-chart-bar me-2"></i>Log Aktivitas
                     </a>
 
                     {{-- PETUGAS --}}

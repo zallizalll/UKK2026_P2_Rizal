@@ -34,9 +34,14 @@
     {{-- HEADER --}}
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0">Kelola Kendaraan</h4>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addKendaraanModal">
-            <i class="fa fa-plus me-2"></i>Tambah Kendaraan
-        </button>
+        <div class="d-flex gap-2">
+            <a href="{{ route('admin.kendaraan.print') }}" target="_blank" class="btn btn-success btn-sm">
+                <i class="fa fa-print me-2"></i>Cetak
+            </a>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addKendaraanModal">
+                <i class="fa fa-plus me-2"></i>Tambah Kendaraan
+            </button>
+        </div>
     </div>
 
     {{-- TABLE --}}
@@ -113,7 +118,8 @@
                 <div class="mb-3">
                     <label class="form-label">Plat Nomor <span class="text-danger">*</span></label>
                     <input type="text" name="plat_nomor" class="form-control bg-dark border-0 text-white"
-                        value="{{ old('plat_nomor') }}" placeholder="Contoh: B 1234 ABC" required>
+                        value="{{ old('plat_nomor') }}" placeholder="Contoh: B 1234 ABC"
+                        style="text-transform:uppercase" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Warna <span class="text-danger">*</span></label>
@@ -121,27 +127,19 @@
                         value="{{ old('warna') }}" placeholder="Contoh: Hitam" required>
                 </div>
                 <div class="row g-3">
-                    <div class="col-6">
-                        <label class="form-label">Status <span class="text-danger">*</span></label>
-                        <select name="status" class="form-select bg-dark border-0 text-white" required>
-                            <option value="masuk" {{ old('status') === 'masuk'  ? 'selected' : '' }}>Masuk</option>
-                            <option value="keluar" {{ old('status') === 'keluar' ? 'selected' : '' }}>Keluar</option>
-                        </select>
-                    </div>
-                    <div class="col-6">
-                        <label class="form-label">Tarif <span class="text-danger">*</span></label>
+                    <div class="col-12">
+                        <label class="form-label">Jenis Kendaraan / Tarif <span class="text-danger">*</span></label>
                         <select name="id_Tarif" class="form-select bg-dark border-0 text-white" required>
                             <option value="">— Pilih —</option>
                             @foreach($tarifs as $t)
-                            {{-- FIX: ganti id_Tarif -> id_tarif dan nama_tarif -> jenis_kendaraan --}}
                             <option value="{{ $t->id_tarif }}" {{ old('id_Tarif') == $t->id_tarif ? 'selected' : '' }}>
-                                {{ $t->jenis_kendaraan }}
+                                {{ $t->jenis_kendaraan }} — Rp {{ number_format($t->tarif_per_jam, 0, ',', '.') }}/jam
                             </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-12">
-                        <label class="form-label">User/Petugas <span class="text-danger">*</span></label>
+                        <label class="form-label">Petugas <span class="text-danger">*</span></label>
                         <select name="id_user" class="form-select bg-dark border-0 text-white" required>
                             <option value="">— Pilih —</option>
                             @foreach($users as $u)

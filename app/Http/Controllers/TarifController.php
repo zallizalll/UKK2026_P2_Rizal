@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tarif;
+use App\Traits\LogAktivitasTrait;
 use Illuminate\Http\Request;
 
 class TarifController extends Controller
 {
+    use LogAktivitasTrait;
+
     public function index()
     {
         $tarifs = Tarif::orderBy('id_tarif', 'desc')->get();
@@ -25,6 +28,8 @@ class TarifController extends Controller
             'tarif_per_jam'   => $request->tarif_per_jam,
         ]);
 
+        $this->log('Tambah tarif: ' . $request->jenis_kendaraan . ' — Rp ' . number_format($request->tarif_per_jam, 0, ',', '.') . '/jam');
+
         return redirect()->route('admin.tarif')->with('success', 'Tarif berhasil ditambahkan!');
     }
 
@@ -42,12 +47,25 @@ class TarifController extends Controller
             'tarif_per_jam'   => $request->tarif_per_jam,
         ]);
 
+        $this->log('Update tarif: ' . $request->jenis_kendaraan . ' — Rp ' . number_format($request->tarif_per_jam, 0, ',', '.') . '/jam');
+
         return redirect()->route('admin.tarif')->with('success', 'Tarif berhasil diupdate!');
     }
 
     public function destroy($id)
     {
-        Tarif::findOrFail($id)->delete();
+        $tarif = Tarif::findOrFail($id);
+
+        $this->log('Hapus tarif: ' . $tarif->jenis_kendaraan . ' — Rp ' . number_format($tarif->tarif_per_jam, 0, ',', '.') . '/jam');
+
+        $tarif->delete();
+
         return redirect()->route('admin.tarif')->with('success', 'Tarif berhasil dihapus!');
+    }
+
+    public function print()
+    {
+        $tarifs = Tarif::orderBy('jenis_kendaraan', 'asc')->get();
+        return view('pages.tarif.print', compact('tarifs'));
     }
 }

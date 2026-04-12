@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Tarif')
+@section('title', 'Area Parkir')
 
 @section('content')
 <div class="container-fluid pt-4 px-4">
@@ -33,13 +33,13 @@
 
     {{-- HEADER --}}
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <h4 class="mb-0">Kelola Tarif</h4>
+        <h4 class="mb-0">Area Parkir</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('admin.tarif.print') }}" target="_blank" class="btn btn-success btn-sm">
-                <i class="fa fa-print me-2"></i>Cetak Tarif
+            <a href="{{ route('admin.area.print') }}" target="_blank" class="btn btn-success btn-sm">
+                <i class="fa fa-print me-2"></i>Cetak
             </a>
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addTarifModal">
-                <i class="fa fa-plus me-2"></i>Tambah Tarif
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAreaModal">
+                <i class="fa fa-plus me-2"></i>Tambah Area
             </button>
         </div>
     </div>
@@ -51,31 +51,49 @@
                 <thead>
                     <tr class="text-white">
                         <th style="width:46px">#</th>
-                        <th>Jenis Kendaraan</th>
-                        <th>Tarif Per Jam</th>
+                        <th>Nama Area</th>
+                        <th>Kapasitas</th>
+                        <th>Ketersediaan</th>
                         <th style="width:110px" class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($tarifs as $index => $tarif)
+                    @forelse($areas as $index => $area)
+                    @php
+                    $persen = $area->kapasitas > 0 ? ($area->terisi / $area->kapasitas) * 100 : 0;
+                    $penuh = $area->terisi >= $area->kapasitas;
+                    $sisa = $area->kapasitas - $area->terisi;
+                    $warna = $penuh ? 'danger' : ($persen >= 70 ? 'warning' : 'success');
+                    @endphp
                     <tr>
                         <td>{{ $index + 1 }}</td>
+                        <td><i class="fa fa-map-marker-alt me-2"></i>{{ $area->nama_area }}</td>
+                        <td>{{ $area->kapasitas }} slot</td>
                         <td>
-                            <i class="fa fa-{{ strtolower($tarif->jenis_kendaraan) === 'motor' ? 'motorcycle' : 'car' }} me-2"></i>
-                            {{ $tarif->jenis_kendaraan }}
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-{{ $warna }} fs-6 px-3">
+                                    {{ $area->terisi }}/{{ $area->kapasitas }}
+                                </span>
+                                <small class="text-muted">
+                                    @if($penuh)
+                                    <span class="text-danger">Penuh</span>
+                                    @else
+                                    Sisa {{ $sisa }} slot
+                                    @endif
+                                </small>
+                            </div>
                         </td>
-                        <td>Rp {{ number_format($tarif->tarif_per_jam, 0, ',', '.') }}</td>
                         <td class="text-center" style="white-space:nowrap">
                             <button class="btn btn-sm btn-warning"
                                 data-bs-toggle="modal"
-                                data-bs-target="#editTarifModal{{ $tarif->id_tarif }}"
+                                data-bs-target="#editAreaModal{{ $area->id_area }}"
                                 title="Edit">
                                 <i class="fa fa-edit"></i>
                             </button>
-                            <form action="{{ route('admin.tarif.destroy', $tarif->id_tarif) }}" method="POST" class="d-inline ms-1">
+                            <form action="{{ route('admin.area.destroy', $area->id_area) }}" method="POST" class="d-inline ms-1">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-danger" title="Hapus"
-                                    onclick="return confirm('Yakin hapus tarif {{ $tarif->jenis_kendaraan }}?')">
+                                    onclick="return confirm('Yakin hapus area {{ $area->nama_area }}?')">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </form>
@@ -83,9 +101,9 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="text-center py-4">
-                            <i class="fa fa-tags fa-2x mb-2 d-block text-muted"></i>
-                            Belum ada data tarif
+                        <td colspan="5" class="text-center py-4">
+                            <i class="fa fa-map-marker-alt fa-2x mb-2 d-block text-muted"></i>
+                            Belum ada data area parkir
                         </td>
                     </tr>
                     @endforelse
@@ -96,31 +114,26 @@
 </div>
 
 {{-- MODAL TAMBAH --}}
-<div class="modal fade" id="addTarifModal" tabindex="-1">
+<div class="modal fade" id="addAreaModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <form action="{{ route('admin.tarif.store') }}" method="POST" class="modal-content bg-secondary">
+        <form action="{{ route('admin.area.store') }}" method="POST" class="modal-content bg-secondary">
             @csrf
             <div class="modal-header border-0">
-                <h5 class="modal-title">Tambah Tarif</h5>
+                <h5 class="modal-title">Tambah Area Parkir</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Jenis Kendaraan <span class="text-danger">*</span></label>
-                    <select name="jenis_kendaraan" class="form-select bg-dark border-0 text-white" required>
-                        <option value="">— Pilih —</option>
-                        <option value="Motor" {{ old('jenis_kendaraan') === 'Motor'  ? 'selected' : '' }}>Motor</option>
-                        <option value="Mobil" {{ old('jenis_kendaraan') === 'Mobil'  ? 'selected' : '' }}>Mobil</option>
-                        <option value="Truk" {{ old('jenis_kendaraan') === 'Truk'   ? 'selected' : '' }}>Truk</option>
-                        <option value="Bus" {{ old('jenis_kendaraan') === 'Bus'    ? 'selected' : '' }}>Bus</option>
-                    </select>
+                    <label class="form-label">Nama Area <span class="text-danger">*</span></label>
+                    <input type="text" name="nama_area" class="form-control bg-dark border-0 text-white"
+                        value="{{ old('nama_area') }}" placeholder="cth: Lantai 1, Zona A" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Tarif Per Jam <span class="text-danger">*</span></label>
+                    <label class="form-label">Kapasitas <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <span class="input-group-text bg-dark border-0 text-white">Rp</span>
-                        <input type="number" name="tarif_per_jam" class="form-control bg-dark border-0 text-white"
-                            value="{{ old('tarif_per_jam') }}" placeholder="0" min="0" required>
+                        <input type="number" name="kapasitas" class="form-control bg-dark border-0 text-white"
+                            value="{{ old('kapasitas') }}" placeholder="0" min="1" required>
+                        <span class="input-group-text bg-dark border-0 text-white">slot</span>
                     </div>
                 </div>
             </div>
@@ -134,33 +147,34 @@
     </div>
 </div>
 
-{{-- MODAL EDIT (per tarif) --}}
-@foreach($tarifs as $tarif)
-<div class="modal fade" id="editTarifModal{{ $tarif->id_tarif }}" tabindex="-1">
+{{-- MODAL EDIT --}}
+@foreach($areas as $area)
+<div class="modal fade" id="editAreaModal{{ $area->id_area }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <form action="{{ route('admin.tarif.update', $tarif->id_tarif) }}" method="POST" class="modal-content bg-secondary">
+        <form action="{{ route('admin.area.update', $area->id_area) }}" method="POST" class="modal-content bg-secondary">
             @csrf @method('PUT')
             <div class="modal-header border-0">
-                <h5 class="modal-title">Edit Tarif — <span class="text-warning">{{ $tarif->jenis_kendaraan }}</span></h5>
+                <h5 class="modal-title">Edit Area — <span class="text-warning">{{ $area->nama_area }}</span></h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Jenis Kendaraan <span class="text-danger">*</span></label>
-                    <select name="jenis_kendaraan" class="form-select bg-dark border-0 text-white" required>
-                        <option value="Motor" {{ $tarif->jenis_kendaraan === 'Motor' ? 'selected' : '' }}>Motor</option>
-                        <option value="Mobil" {{ $tarif->jenis_kendaraan === 'Mobil' ? 'selected' : '' }}>Mobil</option>
-                        <option value="Truk" {{ $tarif->jenis_kendaraan === 'Truk'  ? 'selected' : '' }}>Truk</option>
-                        <option value="Bus" {{ $tarif->jenis_kendaraan === 'Bus'   ? 'selected' : '' }}>Bus</option>
-                    </select>
+                    <label class="form-label">Nama Area <span class="text-danger">*</span></label>
+                    <input type="text" name="nama_area" class="form-control bg-dark border-0 text-white"
+                        value="{{ $area->nama_area }}" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Tarif Per Jam <span class="text-danger">*</span></label>
+                    <label class="form-label">Kapasitas <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <span class="input-group-text bg-dark border-0 text-white">Rp</span>
-                        <input type="number" name="tarif_per_jam" class="form-control bg-dark border-0 text-white"
-                            value="{{ $tarif->tarif_per_jam }}" min="0" required>
+                        <input type="number" name="kapasitas" class="form-control bg-dark border-0 text-white"
+                            value="{{ $area->kapasitas }}" min="{{ $area->terisi }}" required>
+                        <span class="input-group-text bg-dark border-0 text-white">slot</span>
                     </div>
+                    @if($area->terisi > 0)
+                    <small class="text-warning mt-1 d-block">
+                        <i class="fa fa-info-circle me-1"></i>Kapasitas minimal {{ $area->terisi }} (slot terisi saat ini)
+                    </small>
+                    @endif
                 </div>
             </div>
             <div class="modal-footer border-0">

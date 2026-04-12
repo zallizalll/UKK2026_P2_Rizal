@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Traits\LogAktivitasTrait;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    use LogAktivitasTrait;
+
     public function index()
     {
         $users = User::orderBy('id_user', 'desc')->get();
@@ -21,21 +24,16 @@ class UserController extends Controller
             'password' => 'required|min:6',
             'role'     => 'required|in:admin,petugas,owner',
             'shift'    => 'nullable|in:1,2,3|required_if:role,petugas',
-            'status'   => 'nullable|in:aktif,nonaktif', // 🔥 FIX DISINI
+            'status'   => 'nullable|in:aktif,nonaktif',
         ]);
 
-        // logic shift
         $shift = $request->role === 'petugas' ? $request->shift : null;
 
-        // override hanya untuk petugas
         $isOverride = $request->role === 'petugas'
             ? $request->boolean('status_override')
             : false;
 
-        // 🔥 kalau tidak override → status default aja
-        $status = $isOverride
-            ? $request->status
-            : 'nonaktif';
+        $status = $isOverride ? $request->status : 'nonaktif';
 
         User::create([
             'name'            => $request->name,
@@ -46,6 +44,9 @@ class UserController extends Controller
             'status'          => $status,
             'status_override' => $isOverride,
         ]);
+
+        $shiftInfo = $shift ? ' shift ' . $shift : '';
+        $this->log('Tambah user: ' . $request->name . ' (' . ucfirst($request->role) . $shiftInfo . ') — status: ' . $status);
 
         return back()->with('success', 'User berhasil ditambahkan.');
     }
@@ -59,7 +60,7 @@ class UserController extends Controller
             'email'  => 'required|email|unique:users,email,' . $id . ',id_user',
             'role'   => 'required|in:admin,petugas,owner',
             'shift'  => 'nullable|in:1,2,3|required_if:role,petugas',
-            'status' => 'nullable|in:aktif,nonaktif', // 🔥 FIX
+            'status' => 'nullable|in:aktif,nonaktif',
         ]);
 
         $shift = $request->role === 'petugas' ? $request->shift : null;
@@ -68,10 +69,7 @@ class UserController extends Controller
             ? $request->boolean('status_override')
             : false;
 
-        // 🔥 kalau tidak override → pakai status lama aja
-        $status = $isOverride
-            ? $request->status
-            : $user->status;
+        $status = $isOverride ? $request->status : $user->status;
 
         $data = [
             'name'            => $request->name,
@@ -88,7 +86,25 @@ class UserController extends Controller
 
         $user->update($data);
 
+        $shiftInfo = $shift ? ' shift ' . $shift : '';
+        $this->log('Update user: ' . $request->name . ' (' . ucfirst($request->role) . $shiftInfo . ') — status: ' . $status);
+
         return back()->with('success', 'User berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id_user === auth()->user()->id_user) {
+            return back()->with('error', 'Tidak bisa menghapus akun sendiri!');
+        }
+
+        $this->log('Hapus user: ' . $user->name . ' (' . ucfirst($user->role) . ') — ' . $user->email);
+
+        $user->delete();
+
+        return back()->with('success', 'User berhasil dihapus!');
     }
 
     public function print($role)
@@ -104,18 +120,5 @@ class UserController extends Controller
             ->get();
 
         return view('pages.users.print', compact('users', 'role'));
-    }
-
-    public function destroy($id)
-    {
-        $user = User::findOrFail($id);
-
-        if ($user->id_user === auth()->user()->id_user) {
-            return back()->with('error', 'Tidak bisa menghapus akun sendiri!');
-        }
-
-        $user->delete();
-
-        return back()->with('success', 'User berhasil dihapus!');
     }
 }
