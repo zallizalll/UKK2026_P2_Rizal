@@ -2,13 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TarifController;
 use App\Http\Controllers\AreaParkirController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\LogAktivitasController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboard;
+use App\Http\Controllers\Petugas\KendaraanController as PetugasKendaraan;
+use App\Http\Controllers\Petugas\TransaksiController as PetugasTransaksi;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboard;
 
 // ===== AUTH =====
@@ -61,8 +63,12 @@ Route::middleware(['auth', 'role:petugas'])
     ->group(function () {
         Route::get('/dashboard', [PetugasDashboard::class, 'index'])->name('dashboard');
 
-        Route::get('/transaksi', fn() => abort(404))->name('transaksi');
-        Route::get('/riwayat',   fn() => abort(404))->name('riwayat');
+        Route::get('/kendaraan',          [PetugasKendaraan::class, 'index'])->name('kendaraan');
+        Route::post('/kendaraan/masuk',   [PetugasKendaraan::class, 'masuk'])->name('kendaraan.masuk');
+        Route::patch('/kendaraan/{id}/keluar', [PetugasKendaraan::class, 'keluar'])->name('kendaraan.keluar');
+
+        Route::get('/transaksi',                [PetugasTransaksi::class, 'index'])->name('transaksi');
+        Route::get('/transaksi/{id}/struk',     [PetugasTransaksi::class, 'struk'])->name('transaksi.struk');
     });
 
 // ===== OWNER =====

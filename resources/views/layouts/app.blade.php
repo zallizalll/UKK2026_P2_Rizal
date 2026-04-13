@@ -91,9 +91,6 @@
                     <a href="{{ route('petugas.transaksi') }}" class="nav-item nav-link {{ request()->routeIs('petugas.transaksi*') ? 'active' : '' }}">
                         <i class="fa fa-exchange-alt me-2"></i>Transaksi
                     </a>
-                    <a href="{{ route('petugas.riwayat') }}" class="nav-item nav-link {{ request()->routeIs('petugas.riwayat*') ? 'active' : '' }}">
-                        <i class="fa fa-history me-2"></i>Riwayat
-                    </a>
 
                     {{-- OWNER --}}
                     @elseif(Auth::user()->role === 'owner')

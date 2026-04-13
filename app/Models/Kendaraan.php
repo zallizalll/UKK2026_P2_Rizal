@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kendaraan extends Model
 {
-    protected $table = 'kendaraan';
+    protected $table      = 'kendaraan';
     protected $primaryKey = 'id_kendaraan';
-    public $timestamps = false;
+    public $timestamps    = false;
 
     protected $fillable = [
         'plat_nomor',
@@ -26,5 +26,10 @@ class Kendaraan extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    public function transaksis()
+    {
+        return $this->hasMany(Transaksi::class, 'id_kendaraan', 'id_kendaraan');
     }
 }
