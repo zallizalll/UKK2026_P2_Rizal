@@ -17,6 +17,9 @@
         <button class="btn btn-sm btn-outline-warning filter-btn" data-filter="aktif">
             Aktif <span class="badge bg-warning text-dark ms-1">{{ $transaksis->where('status','aktif')->count() }}</span>
         </button>
+        <button class="btn btn-sm btn-outline-danger filter-btn" data-filter="pending">
+            Pending <span class="badge bg-danger ms-1">{{ $transaksis->where('status','pending')->count() }}</span>
+        </button>
         <button class="btn btn-sm btn-outline-success filter-btn" data-filter="selesai">
             Selesai <span class="badge bg-success ms-1">{{ $transaksis->where('status','selesai')->count() }}</span>
         </button>
@@ -35,12 +38,20 @@
                         <th>Waktu Keluar</th>
                         <th>Durasi</th>
                         <th>Total Bayar</th>
+                        <th>Metode Bayar</th>
                         <th>Status</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($transaksis as $i => $t)
+                    @php
+                    $badgeColor = match($t->status) {
+                    'selesai' => 'success',
+                    'pending' => 'danger',
+                    default => 'warning text-dark',
+                    };
+                    @endphp
                     <tr data-status="{{ $t->status }}">
                         <td>{{ $i + 1 }}</td>
                         <td><strong>{{ $t->kendaraan->plat_nomor ?? '-' }}</strong></td>
@@ -57,7 +68,17 @@
                             @endif
                         </td>
                         <td>
-                            <span class="badge bg-{{ $t->status === 'selesai' ? 'success' : 'warning text-dark' }}">
+                            @if($t->metode_pembayaran)
+                            <span class="badge bg-{{ $t->metode_pembayaran === 'qris' ? 'info text-dark' : 'light text-dark' }}">
+                                <i class="fa fa-{{ $t->metode_pembayaran === 'qris' ? 'qrcode' : 'money-bill-wave' }} me-1"></i>
+                                {{ strtoupper($t->metode_pembayaran) }}
+                            </span>
+                            @else
+                            <span class="text-muted">-</span>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ $badgeColor }}">
                                 {{ ucfirst($t->status) }}
                             </span>
                         </td>
@@ -67,14 +88,19 @@
                                 target="_blank" class="btn btn-sm btn-info" title="Cetak Struk">
                                 <i class="fa fa-print"></i>
                             </a>
+                            @elseif($t->status === 'pending')
+                            <a href="{{ route('petugas.transaksi.bayar', $t->id_transaksi) }}"
+                                class="btn btn-sm btn-warning" title="Proses Pembayaran">
+                                <i class="fa fa-credit-card me-1"></i> Bayar
+                            </a>
                             @else
-                            <span class="text-muted small">Belum selesai</span>
+                            <span class="text-muted small">Aktif</span>
                             @endif
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="10" class="text-center py-4">
+                        <td colspan="11" class="text-center py-4">
                             <i class="fa fa-exchange-alt fa-2x mb-2 d-block text-muted"></i>
                             Belum ada transaksi
                         </td>

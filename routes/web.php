@@ -68,6 +68,8 @@ Route::middleware(['auth', 'role:petugas'])
         Route::patch('/kendaraan/{id}/keluar', [PetugasKendaraan::class, 'keluar'])->name('kendaraan.keluar');
 
         Route::get('/transaksi',                [PetugasTransaksi::class, 'index'])->name('transaksi');
+        Route::get('/transaksi/{id}/bayar',        [PetugasTransaksi::class, 'bayar'])->name('transaksi.bayar');
+        Route::post('/transaksi/{id}/proses-bayar', [PetugasTransaksi::class, 'prosesBayar'])->name('transaksi.prosesBayar');
         Route::get('/transaksi/{id}/struk',     [PetugasTransaksi::class, 'struk'])->name('transaksi.struk');
     });
 

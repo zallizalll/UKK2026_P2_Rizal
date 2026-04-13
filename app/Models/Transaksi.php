@@ -19,6 +19,7 @@ class Transaksi extends Model
         'durasi_menit',
         'durasi',
         'biaya_total',
+        'metode_pembayaran',
         'status',
         'id_user',
         'id_area',

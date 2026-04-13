@@ -79,46 +79,36 @@ class KendaraanController extends Controller
                 ->with('error', 'Kendaraan sudah tercatat keluar!');
         }
 
-        // Ambil transaksi aktif
         $transaksi = Transaksi::where('id_kendaraan', $id)
-            ->where('status', 'aktif')
-            ->first();
+            ->where('status', 'aktif')->first();
 
         if ($transaksi) {
-            $masuk  = Carbon::parse($transaksi->waktu_masuk);
-            $keluar = Carbon::now();
-
-            // Hitung durasi — dibulatkan ke atas
+            $masuk       = Carbon::parse($transaksi->waktu_masuk);
+            $keluar      = Carbon::now();
             $totalMenit  = $masuk->diffInMinutes($keluar);
-            $durasiJam   = (int) ceil($totalMenit / 60); // bulatkan ke atas
+            $durasiJam   = max(1, (int) ceil($totalMenit / 60));
             $durasiMenit = $totalMenit % 60;
+            $biayaTotal  = $durasiJam * $transaksi->tarif->tarif_per_jam;
 
-            // Minimal 1 jam
-            if ($durasiJam < 1) $durasiJam = 1;
-
-            $biayaTotal = $durasiJam * $transaksi->tarif->tarif_per_jam;
-
+            // Status jadi PENDING dulu, belum selesai
             $transaksi->update([
                 'waktu_keluar' => $keluar,
                 'durasi_jam'   => $durasiJam,
                 'durasi_menit' => $durasiMenit,
                 'durasi'       => $durasiJam . ' jam ' . $durasiMenit . ' menit',
                 'biaya_total'  => $biayaTotal,
-                'status'       => 'selesai',
+                'status'       => 'pending', // ← pending, bukan selesai
             ]);
 
-            // Kurangi slot area
             $area = $transaksi->area;
-            if ($area && $area->terisi > 0) {
-                $area->decrement('terisi');
-            }
+            if ($area && $area->terisi > 0) $area->decrement('terisi');
         }
 
-        // Update status kendaraan
         $kendaraan->update(['status' => 'keluar']);
 
-        $this->log('Kendaraan keluar: ' . $kendaraan->plat_nomor . ' — durasi: ' . ($durasiJam ?? 0) . ' jam — biaya: Rp ' . number_format($biayaTotal ?? 0, 0, ',', '.'));
+        $this->log('Kendaraan keluar: ' . $kendaraan->plat_nomor . ' — menunggu pembayaran');
 
-        return redirect()->route('petugas.transaksi.struk', $transaksi->id_transaksi);
+        // Redirect ke halaman pembayaran (bukan struk)
+        return redirect()->route('petugas.transaksi.bayar', $transaksi->id_transaksi);
     }
 }
