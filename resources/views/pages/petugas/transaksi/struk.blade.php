@@ -14,7 +14,7 @@
         body {
             font-family: 'Courier New', monospace;
             font-size: 13px;
-            background: #fff;
+            background: #f5f5f5;
             color: #000;
         }
 
@@ -22,6 +22,7 @@
             width: 300px;
             margin: 30px auto;
             padding: 20px;
+            background: #fff;
             border: 1px dashed #999;
         }
 
@@ -73,6 +74,13 @@
             color: #000;
         }
 
+        .metode {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #555;
+        }
+
         .footer {
             text-align: center;
             margin-top: 16px;
@@ -80,19 +88,35 @@
             color: #777;
         }
 
+        /* ===== TOMBOL ===== */
         .no-print {
             text-align: center;
-            margin: 20px auto;
+            margin: 24px auto;
             width: 300px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
         }
 
+        .no-print a,
         .no-print button {
-            padding: 8px 20px;
-            margin: 0 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
+            font-family: 'Courier New', monospace;
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity .2s;
+        }
+
+        .no-print a:hover,
+        .no-print button:hover {
+            opacity: .85;
         }
 
         .btn-print {
@@ -101,7 +125,7 @@
         }
 
         .btn-back {
-            background: #555;
+            background: #444;
             color: #fff;
         }
 
@@ -111,6 +135,7 @@
             }
 
             body {
+                background: #fff;
                 margin: 0;
             }
 
@@ -124,9 +149,14 @@
 
 <body>
 
+    {{-- TOMBOL AKSI --}}
     <div class="no-print">
-        <button class="btn-print" onclick="window.print()">🖨️ Cetak Struk</button>
-        <button class="btn-back" onclick="window.history.back()">← Kembali</button>
+        <button class="btn-print" onclick="window.print()">
+            🖨️ Cetak Struk
+        </button>
+        <a href="{{ route('petugas.transaksi') }}" class="btn-back">
+            ← Kembali
+        </a>
     </div>
 
     <div class="struk">
@@ -196,6 +226,12 @@
                 <span class="value">Rp {{ number_format($transaksi->biaya_total ?? 0, 0, ',', '.') }}</span>
             </div>
         </div>
+
+        @if($transaksi->metode_pembayaran)
+        <div class="metode">
+            Dibayar via {{ strtoupper($transaksi->metode_pembayaran) }}
+        </div>
+        @endif
 
         <div class="divider"></div>
 

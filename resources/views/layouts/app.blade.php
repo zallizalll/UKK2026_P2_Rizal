@@ -49,7 +49,6 @@
 
                 <!-- Info User -->
                 <div class="d-flex align-items-center ms-4 mb-4">
-                    
                     <div class="ms-3">
                         <h6 class="mb-0">{{ Auth::user()->name }}</h6>
                         <span class="text-capitalize">{{ Auth::user()->role }}</span>
@@ -97,11 +96,11 @@
                     <a href="{{ route('owner.dashboard') }}" class="nav-item nav-link {{ request()->routeIs('owner.dashboard') ? 'active' : '' }}">
                         <i class="fa fa-tachometer-alt me-2"></i>Dashboard
                     </a>
-                    <a href="{{ route('owner.laporan') }}" class="nav-item nav-link {{ request()->routeIs('owner.laporan*') ? 'active' : '' }}">
-                        <i class="fa fa-chart-line me-2"></i>Laporan
+                    <a href="{{ route('owner.transaksi.index') }}" class="nav-item nav-link {{ request()->routeIs('owner.transaksi*') ? 'active' : '' }}">
+                        <i class="fa fa-exchange-alt me-2"></i>Rekap Transaksi
                     </a>
-                    <a href="{{ route('owner.pendapatan') }}" class="nav-item nav-link {{ request()->routeIs('owner.pendapatan*') ? 'active' : '' }}">
-                        <i class="fa fa-money-bill me-2"></i>Pendapatan
+                    <a href="{{ route('owner.kendaraan.index') }}" class="nav-item nav-link {{ request()->routeIs('owner.kendaraan*') ? 'active' : '' }}">
+                        <i class="fa fa-car me-2"></i>Rekap Kendaraan
                     </a>
                     @endif
 
