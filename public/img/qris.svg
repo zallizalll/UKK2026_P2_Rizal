@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="340" viewBox="0 0 300 340">
+  <!-- Background -->
+  <rect width="300" height="340" fill="white" rx="12"/>
+
+  <!-- Header QRIS -->
+  <rect x="0" y="0" width="300" height="48" fill="#ED1C24" rx="12"/>
+  <rect x="0" y="36" width="300" height="12" fill="#ED1C24"/>
+  <text x="150" y="30" font-family="Arial Black, sans-serif" font-size="18" font-weight="900" fill="white" text-anchor="middle" letter-spacing="6">QRIS</text>
+
+  <!-- QR Code area -->
+  <!-- Outer border -->
+  <rect x="30" y="64" width="240" height="240" fill="white" stroke="#000" stroke-width="2" rx="4"/>
+
+  <!-- Top-left position square -->
+  <rect x="40" y="74" width="60" height="60" fill="none" stroke="#000" stroke-width="3"/>
+  <rect x="50" y="84" width="40" height="40" fill="#000" rx="2"/>
+  <rect x="58" y="92" width="24" height="24" fill="white" rx="1"/>
+  <rect x="64" y="98" width="12" height="12" fill="#000" rx="1"/>
+
+  <!-- Top-right position square -->
+  <rect x="200" y="74" width="60" height="60" fill="none" stroke="#000" stroke-width="3"/>
+  <rect x="210" y="84" width="40" height="40" fill="#000" rx="2"/>
+  <rect x="218" y="92" width="24" height="24" fill="white" rx="1"/>
+  <rect x="224" y="98" width="12" height="12" fill="#000" rx="1"/>
+
+  <!-- Bottom-left position square -->
+  <rect x="40" y="234" width="60" height="60" fill="none" stroke="#000" stroke-width="3"/>
+  <rect x="50" y="244" width="40" height="40" fill="#000" rx="2"/>
+  <rect x="58" y="252" width="24" height="24" fill="white" rx="1"/>
+  <rect x="64" y="258" width="12" height="12" fill="#000" rx="1"/>
+
+  <!-- Data modules (simulated pattern) -->
+  <g fill="#000">
+    <!-- Row 1 -->
+    <rect x="118" y="74" width="8" height="8"/>
+    <rect x="134" y="74" width="8" height="8"/>
+    <rect x="150" y="74" width="8" height="8"/>
+    <rect x="174" y="74" width="8" height="8"/>
+    <rect x="190" y="74" width="8" height="8"/>
+    <!-- Row 2 -->
+    <rect x="118" y="90" width="8" height="8"/>
+    <rect x="142" y="90" width="8" height="8"/>
+    <rect x="158" y="90" width="8" height="8"/>
+    <rect x="182" y="90" width="8" height="8"/>
+    <!-- Row 3 -->
+    <rect x="126" y="106" width="8" height="8"/>
+    <rect x="150" y="106" width="8" height="8"/>
+    <rect x="166" y="106" width="8" height="8"/>
+    <rect x="190" y="106" width="8" height="8"/>
+    <!-- Row 4 -->
+    <rect x="118" y="122" width="8" height="8"/>
+    <rect x="134" y="122" width="8" height="8"/>
+    <rect x="158" y="122" width="8" height="8"/>
+    <rect x="174" y="122" width="8" height="8"/>
+    <rect x="190" y="122" width="8" height="8"/>
+    <!-- Row 5 -->
+    <rect x="126" y="138" width="8" height="8"/>
+    <rect x="142" y="138" width="8" height="8"/>
+    <rect x="166" y="138" width="8" height="8"/>
+    <rect x="182" y="138" width="8" height="8"/>
+    <!-- Middle rows -->
+    <rect x="40" y="146" width="8" height="8"/>
+    <rect x="56" y="146" width="8" height="8"/>
+    <rect x="72" y="146" width="8" height="8"/>
+    <rect x="88" y="146" width="8" height="8"/>
+    <rect x="118" y="154" width="8" height="8"/>
+    <rect x="142" y="154" width="8" height="8"/>
+    <rect x="158" y="154" width="8" height="8"/>
+    <rect x="174" y="154" width="8" height="8"/>
+    <rect x="200" y="154" width="8" height="8"/>
+    <rect x="216" y="154" width="8" height="8"/>
+    <rect x="232" y="154" width="8" height="8"/>
+    <rect x="40" y="162" width="8" height="8"/>
+    <rect x="64" y="162" width="8" height="8"/>
+    <rect x="80" y="162" width="8" height="8"/>
+    <rect x="96" y="162" width="8" height="8"/>
+    <rect x="126" y="170" width="8" height="8"/>
+    <rect x="150" y="170" width="8" height="8"/>
+    <rect x="166" y="170" width="8" height="8"/>
+    <rect x="190" y="170" width="8" height="8"/>
+    <rect x="208" y="170" width="8" height="8"/>
+    <rect x="224" y="170" width="8" height="8"/>
+    <rect x="48" y="178" width="8" height="8"/>
+    <rect x="72" y="178" width="8" height="8"/>
+    <rect x="88" y="178" width="8" height="8"/>
+    <rect x="118" y="186" width="8" height="8"/>
+    <rect x="134" y="186" width="8" height="8"/>
+    <rect x="158" y="186" width="8" height="8"/>
+    <rect x="182" y="186" width="8" height="8"/>
+    <rect x="200" y="186" width="8" height="8"/>
+    <rect x="232" y="186" width="8" height="8"/>
+    <rect x="40" y="194" width="8" height="8"/>
+    <rect x="56" y="194" width="8" height="8"/>
+    <rect x="80" y="194" width="8" height="8"/>
+    <rect x="96" y="194" width="8" height="8"/>
+    <rect x="126" y="202" width="8" height="8"/>
+    <rect x="150" y="202" width="8" height="8"/>
+    <rect x="174" y="202" width="8" height="8"/>
+    <rect x="208" y="202" width="8" height="8"/>
+    <rect x="224" y="202" width="8" height="8"/>
+    <rect x="48" y="210" width="8" height="8"/>
+    <rect x="72" y="210" width="8" height="8"/>
+    <rect x="88" y="210" width="8" height="8"/>
+    <!-- Bottom rows -->
+    <rect x="118" y="234" width="8" height="8"/>
+    <rect x="142" y="234" width="8" height="8"/>
+    <rect x="166" y="234" width="8" height="8"/>
+    <rect x="190" y="234" width="8" height="8"/>
+    <rect x="208" y="234" width="8" height="8"/>
+    <rect x="232" y="234" width="8" height="8"/>
+    <rect x="126" y="250" width="8" height="8"/>
+    <rect x="150" y="250" width="8" height="8"/>
+    <rect x="174" y="250" width="8" height="8"/>
+    <rect x="200" y="250" width="8" height="8"/>
+    <rect x="224" y="250" width="8" height="8"/>
+    <rect x="118" y="266" width="8" height="8"/>
+    <rect x="134" y="266" width="8" height="8"/>
+    <rect x="158" y="266" width="8" height="8"/>
+    <rect x="182" y="266" width="8" height="8"/>
+    <rect x="216" y="266" width="8" height="8"/>
+    <rect x="126" y="282" width="8" height="8"/>
+    <rect x="150" y="282" width="8" height="8"/>
+    <rect x="166" y="282" width="8" height="8"/>
+    <rect x="190" y="282" width="8" height="8"/>
+    <rect x="208" y="282" width="8" height="8"/>
+    <rect x="232" y="282" width="8" height="8"/>
+  </g>
+
+  <!-- Footer -->
+  <rect x="0" y="308" width="300" height="32" fill="#f5f5f5" rx="0"/>
+  <rect x="0" y="308" width="300" height="8" fill="#f5f5f5"/>
+  <rect x="0" y="316" width="300" height="24" fill="#f5f5f5" rx="12"/>
+  <text x="150" y="330" font-family="Arial, sans-serif" font-size="10" fill="#888" text-anchor="middle">Scan dengan aplikasi bank / e-wallet</text>
+</svg>
