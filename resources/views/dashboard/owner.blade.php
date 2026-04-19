@@ -89,29 +89,6 @@
     </div>
 </div>
 
-{{-- ===== GRAFIK ===== --}}
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-
-        {{-- Grafik Transaksi --}}
-        <div class="col-12 col-xl-6">
-            <div class="bg-secondary rounded p-4">
-                <h6 class="mb-4">Grafik Jumlah Transaksi (12 Bulan Terakhir)</h6>
-                <canvas id="grafikTransaksi" style="max-height:280px"></canvas>
-            </div>
-        </div>
-
-        {{-- Grafik Pendapatan --}}
-        <div class="col-12 col-xl-6">
-            <div class="bg-secondary rounded p-4">
-                <h6 class="mb-4">Grafik Pendapatan (12 Bulan Terakhir)</h6>
-                <canvas id="grafikPendapatan" style="max-height:280px"></canvas>
-            </div>
-        </div>
-
-    </div>
-</div>
-
 {{-- ===== AREA PARKIR + KENDARAAN PARKIR ===== --}}
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
@@ -330,107 +307,6 @@
 
 @push('scripts')
 <script>
-    // ===== GRAFIK TRANSAKSI =====
-    new Chart(document.getElementById('grafikTransaksi').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: {
-                !!json_encode($labelBulan) !!
-            },
-            datasets: [{
-                label: 'Jumlah Transaksi',
-                data: {
-                    !!json_encode($dataGrafik) !!
-                },
-                backgroundColor: 'rgba(13, 110, 253, 0.7)',
-                borderColor: 'rgba(13, 110, 253, 1)',
-                borderWidth: 1,
-                borderRadius: 4,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#fff'
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: '#fff'
-                    },
-                    grid: {
-                        color: 'rgba(255,255,255,0.1)'
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: '#fff'
-                    },
-                    grid: {
-                        color: 'rgba(255,255,255,0.1)'
-                    },
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // ===== GRAFIK PENDAPATAN =====
-    new Chart(document.getElementById('grafikPendapatan').getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: {
-                !!json_encode($labelBulan) !!
-            },
-            datasets: [{
-                label: 'Pendapatan (Rp)',
-                data: {
-                    !!json_encode($dataGrafikPendapatan) !!
-                },
-                backgroundColor: 'rgba(25, 135, 84, 0.2)',
-                borderColor: 'rgba(25, 135, 84, 1)',
-                borderWidth: 2,
-                pointBackgroundColor: 'rgba(25, 135, 84, 1)',
-                tension: 0.4,
-                fill: true,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#fff'
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: '#fff'
-                    },
-                    grid: {
-                        color: 'rgba(255,255,255,0.1)'
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: '#fff',
-                        callback: val => 'Rp ' + val.toLocaleString('id-ID')
-                    },
-                    grid: {
-                        color: 'rgba(255,255,255,0.1)'
-                    },
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
     // ===== FILTER TRANSAKSI =====
     document.querySelectorAll('.filter-transaksi').forEach(btn => {
         btn.addEventListener('click', function() {

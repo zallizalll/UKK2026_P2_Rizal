@@ -59,20 +59,6 @@
     </div>
 </div>
 
-{{-- ===== GRAFIK ===== --}}
-<div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-12">
-            <div class="bg-secondary rounded p-4">
-                <div class="d-flex align-items-center justify-content-between mb-4">
-                    <h6 class="mb-0">Grafik Transaksi {{ date('Y') }}</h6>
-                </div>
-                <canvas id="grafikTransaksi" style="max-height: 300px;"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
 {{-- ===== AREA PARKIR + TRANSAKSI AKTIF ===== --}}
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
@@ -198,59 +184,3 @@
 </div>
 
 @endsection
-
-@push('scripts')
-<script>
-    const ctx = document.getElementById('grafikTransaksi').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: {
-                !!json_encode($labelBulan) !!
-            },
-            datasets: [{
-                label: 'Jumlah Transaksi',
-                data: {
-                    !!json_encode($dataGrafik) !!
-                },
-                backgroundColor: 'rgba(13, 110, 253, 0.7)',
-                borderColor: 'rgba(13, 110, 253, 1)',
-                borderWidth: 1,
-                borderRadius: 4,
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#fff'
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: '#fff'
-                    },
-                    grid: {
-                        color: 'rgba(255,255,255,0.1)'
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: '#fff'
-                    },
-                    grid: {
-                        color: 'rgba(255,255,255,0.1)'
-                    },
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Auto refresh setiap 60 detik
-    setTimeout(() => location.reload(), 60000);
-</script>
-@endpush
